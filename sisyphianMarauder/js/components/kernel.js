@@ -11,9 +11,11 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 	
 	var vm = this;
 	
+	vm.turnTime = 50;		// in ms	
 	vm.currentRoomId = 0;
 	vm.replaceColor = "#00CC00";
 	vm.targetRoomId = 0;
+	vm.autoExplore = false;
 	
 	vm.worldSeed = 16666;
 	vm.dungeonSeed = 666;
@@ -220,7 +222,7 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		if (vm.targetRoomId > 0) {
 			var dt = new Date();
 			
-			console.log((dt - vm.lastMoveTimestamp) / 1000);
+			//console.log((dt - vm.lastMoveTimestamp) / 1000);
 			if ((dt - vm.lastMoveTimestamp) / 1000 > 0.5) {
 				//console.log('move now');
 				//console.log('calculate next node');
@@ -239,6 +241,17 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 				
 				if (vm.currentRoomId == vm.targetRoomId)
 					vm.targetRoomId = 0;
+			}
+		}
+		else {
+			if (vm.autoExplore) {
+				var notExtendedNodes = vm.worldmap.nodes.get({
+					filter: function (item) {
+						return (item.extended == false);
+					}
+				});
+				//console.log(notExtendedNodes[0].id);
+				vm.targetRoomId = notExtendedNodes[0].id;
 			}
 		}
 		
@@ -298,7 +311,7 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		vm.currentRoomId = vm.worldmap.nodes.get(2).id;
 		console.log(JSON.stringify(vm.worldmap.nodes.get(2)));
 		console.log(vm.currentRoomId);
-		vm.turnTimer = $interval(function() { vm.processTurn();  }, 250);
+		vm.turnTimer = $interval(function() { vm.processTurn();  }, vm.turnTime);
 
 		toasty.success('woop woop');
 	}
@@ -332,13 +345,14 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 	}
 	
 	vm.t = function() {
-		var nodes = vm.worldmap.nodes.getIds();
-		var item = Math.floor(Math.random() * nodes.length - 1);
-		if (item < 0)
-			item = 0;
-		
-		vm.worldmap.extendRoom(nodes[item]);
-		vm.mapNetwork.fit();
+		vm.autoExplore = !vm.autoExplore;
+	// 	var nodes = vm.worldmap.nodes.getIds();
+	// 	var item = Math.floor(Math.random() * nodes.length - 1);
+	// 	if (item < 0)
+	// 		item = 0;
+	// 	
+	// 	vm.worldmap.extendRoom(nodes[item]);
+	// 	vm.mapNetwork.fit();
 	}
 	
 	vm.init();
