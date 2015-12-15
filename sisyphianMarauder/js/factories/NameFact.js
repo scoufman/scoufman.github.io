@@ -4,7 +4,7 @@ app.factory('NameFact', ['$rootScope', function($rootScope) {
 	factory.pathNames = ["wooden bridge", "muddy road", "dark path"];
 
 	factory.dungeonPrefixes = ["Dusty", "Ruined", "Crumbled", "Never-ending", "Abandoned", "Eternal", "Fabulous", "Atrocious", "Spooky", "Scary", "Bloody", "Suspicious"];
-	factory.dungeonNames = ["Church of Cthulhu", "Hospital", "Warehouse", "Castle", "Graveyard", "Pharmacy", "Town Hall", "Mall"];
+	factory.dungeonNames = ["Church of Cthulhu", "Hospital", "Warehouse", "Castle", "Graveyard", "Pharmacy", "Town Hall", "Farm", "Windmill", "Tavern"];
 
 	factory.getRandomDungeonName = function() {
 		

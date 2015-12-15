@@ -29,14 +29,57 @@ app.factory('mapFact', ['$rootScope', 'NameFact', 'VisDataSet', function($rootSc
 		return room;
 	}
 	
+	// TODO better resolution
+	factory.checkDungeonRoomName = function(room) {
+		room.shape = "circularImage";
+		
+		if (room.label.indexOf("Church") > -1) {
+				room.image = "img/church.png"
+		}
+		else if (room.label.indexOf("Castle") > -1) {
+			room.image = "img/castle_large.png";
+		}
+		else if (room.label.indexOf("Farm") > -1) {
+			room.image ="img/farm.png";
+		}
+		else if (room.label.indexOf("Windmill") > -1) {
+			room.image ="img/windmill_complete.png";
+		}
+		else if (room.label.indexOf("Tavern") > -1) {
+			room.image ="img/tavern.png";
+		}
+		else if (room.label.indexOf("Town Hall") > -1) {
+			room.image ="img/oldBuilding.png";
+		}
+		else if (room.label.indexOf("Hospital") > -1) {
+			room.image ="img/villa_large.png";
+		}
+		else if (room.label.indexOf("Pharmacy") > -1) {
+			room.image ="img/villa.png";
+		}
+		else if (room.label.indexOf("Warehouse") > -1) {
+			room.image ="img/scifi_hangar2.png";
+		}
+		else if (room.label.indexOf("Graveyard") > -1) {
+			room.image ="img/tombstone3.png";
+		}
+		else {
+			room.shape = "star"	
+		}
+	}
+	
 	factory.createRandomRoom = function() {
 		var room = {};
 		
 		var rand = Math.floor(Math.random() * 100 + 1);
 		
-		if (rand > 0 && rand < 16) {
+		if (rand > 0 && rand < 100) {
 			room.label = factory.nameFact.getRandomDungeonName();
-			room.shape = "star"
+			
+			factory.checkDungeonRoomName(room);
+			
+			
+			
 			room.color = "#FF0000";
 			room.size = 25;
 		}
