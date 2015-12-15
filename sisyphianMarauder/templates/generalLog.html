@@ -1,0 +1,20 @@
+<span>
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<strong>
+				General log
+			</strong>
+		</div>
+	</div>
+	
+	<div class="row" ng-repeat="entry in generallog.entries">
+		<div class="col-xs-2 text-right">
+			{{ entry.timestamp }}
+		</div>
+
+		<div class="col-xs-10">
+			{{ entry.message }}
+		</div>
+	</div>
+</span>
+	

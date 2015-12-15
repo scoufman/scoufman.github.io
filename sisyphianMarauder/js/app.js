@@ -1,0 +1,1 @@
+var app = angular.module('sisyphianMarauder', ['ui.bootstrap', 'ngAnimate', 'angular-toasty', 'ngVis']);

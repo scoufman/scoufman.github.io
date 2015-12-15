@@ -1,0 +1,36 @@
+<span>
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<strong>
+				Dungeon information
+			</strong>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			{{ dungeoninfo.obj.name }}
+		</div>		
+	</div>	
+
+	<div class="row">
+		<counterdouble
+			name="Explored Rooms"
+			currentcount="dungeoninfo.obj.exploredRooms"
+			maxcount="dungeoninfo.obj.roomCount"
+			namecss="col-xs-6 genericlabel-name text-center"
+			countcss="col-xs-3 genericlabel-value text-center">
+		</counterdouble>
+	</div>
+	
+	<div class="row">
+		<labelwithvalue
+			name="Mobs in Room"
+			value="dungeoninfo.obj.getNextRoom().mobs.length"
+			namecss="col-xs-6 genericlabel-name text-center"
+			valuecss="col-xs-3 genericlabel-value text-center">
+		</labelwithvalue>
+	</div>
+</span>
+
+ 

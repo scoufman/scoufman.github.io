@@ -1,0 +1,94 @@
+<span>
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<strong>
+				Character Information
+			</strong>
+		</div>
+	</div>
+	
+	<div class="row">	
+		<labelwithvalue
+			name="Name"
+			value="playerinfo.obj.name"
+			namecss="col-xs-2 genericlabel-name text-center"
+			valuecss="col-xs-3 genericlabel-value text-right">
+		</labelwithvalue>
+	</div>
+	
+	<div class="row">
+		<labelwithvalue
+			name="Level"
+			value="playerinfo.obj.level"
+			namecss="col-xs-2 genericlabel-name text-center"
+			valuecss="col-xs-3 genericlabel-value text-right">
+		</labelwithvalue>
+		
+		<!--<div class="col-xs-1">
+			<button class="btn-xs" style="border:none; height:18px;" ng-click="playerinfo.LevelUp()">+</button>
+		</div>
+		<div class="col-xs-1" >
+			<button class="btn-xs" style="border:none; height:18px;" ng-click="playerinfo.LevelDown()">-</button>
+		</div>-->
+		
+		<labelwithvalue
+			name="Strength"
+			value="playerinfo.obj.strength"
+			namecss="col-xs-3 genericlabel-name text-center"
+			valuecss="col-xs-3 genericlabel-value text-right">
+		</labelwithvalue>
+	</div>
+		
+	<div class="row">
+		<counterdouble
+			name="Health"
+			currentcount="playerinfo.obj.health"
+			maxcount="playerinfo.obj.maxHealth"
+			uib-tooltip="Your health pool."
+			tooltip-trigger="mouseenter"
+			namecss="col-xs-2 genericlabel-name text-center"
+			countcss="col-xs-3 genericlabel-value text-right">
+		</counterdouble>
+		
+		<labelwithvalue
+			name="Vitality"
+			value="playerinfo.obj.vitality"
+			namecss="col-xs-3 genericlabel-name text-center"
+			valuecss="col-xs-3 genericlabel-value text-right"
+			uib-tooltip="Used to compute your maximum Health."
+			tooltip-trigger="mouseenter">
+		</labelwithvalue>
+	</div>
+		
+	<div class="row">
+		<counterdouble
+			name="Mana"
+			currentcount="playerinfo.obj.mana"
+			maxcount="playerinfo.obj.maxMana"
+			uib-tooltip="Your mana pool."
+			tooltip-trigger="mouseenter"
+			namecss="col-xs-2 genericlabel-name text-center"
+			countcss="col-xs-3 genericlabel-value text-right">
+		</counterdouble>
+		
+		<counterdouble
+			name="Experience"
+			currentcount="playerinfo.obj.experience"
+			maxcount="playerinfo.expfunc()(playerinfo.obj.level)"
+			namecss="col-xs-3 genericlabel-name text-center"
+			countcss="col-xs-2 genericlabel-value text-right">
+		</counterdouble>
+		<div class="col-xs-1">
+			<button class="btn-xs" style="border:none; height:18px;" ng-click="playerinfo.ExpUp();">+</button>
+		</div>
+	</div>
+	
+	<div class="row">
+		<labelwithvalue
+			name="APS"
+			value="playerinfo.obj.calculateAPS()"
+			namecss="col-xs-2 genericlabel-name text-center"
+			valuecss="col-xs-3 genericlabel-value text-right">
+		</labelwithvalue>
+	</div>
+</span>

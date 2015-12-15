@@ -1,0 +1,35 @@
+<span>
+	<div class="row col-xs-12 text-center">
+		<strong>
+			Actions
+		</strong>
+	</div>
+	<div class="row">
+		<div class="col-xs-2"
+			ng-show="!actions.kernel.isInsideDungeon">
+			<button
+				ng-disabled="actions.kernel.canClearDungeon"
+				class="btn-xs"
+				ng-class="{ 'btn-danger': actions.kernel.canClearDungeon, 'btn-success': actions.kernel.canMakeDungeon }"				
+				style="border:none; height:36px;"
+				ng-click="actions.enterDungeon()">Enter Dungeon</button>
+		</div>
+		
+		<div class="col-xs-2"
+			ng-show="actions.kernel.canClearDungeon">
+			<button
+				ng-disabled="actions.kernel.canMakeDungeon"
+				class="btn-xs"
+				ng-class="{ 'btn-danger': actions.kernel.canMakeDungeon, 'btn-success': actions.kernel.canClearDungeon }"
+				style="border:none; height:36px;"
+				ng-click="actions.exitDungeon()">Exit Dungeon</button>
+		</div>
+		
+		<div class="col-xs-2">
+			<button
+				class="btn-xs"
+				style="border:none; height:36px;"
+				ng-click="actions.kernel.t();">Add node</button>
+		</div>
+	</div>
+</span

@@ -1,0 +1,105 @@
+<span>
+	<div class="container" style="border: 1px solid black;">
+		<div class="row text-center">
+			<div class="col-md-12">
+				Sisyphian Marauder v0.0.1
+			</div>
+		</div>
+
+		<!--<div class="row">
+			<div class="col-xs-5">
+				<labelwithvalue
+					name="Turn"
+					value="vm.turnCount"
+					namecss="col-xs-2 text-center turncounter-name"
+					valuecss="col-xs-3 text-right turncounter-value">
+				</labelwithvalue>
+			</div>
+		</div>
+		
+		<div class="row">
+			&nbsp;
+		</div>-->
+		
+		<div class="row">
+			<div class="col-xs-4">
+				<playerInfo
+					obj="vm.player"
+					expFunc="vm.statsFact.getExpForLevel">
+				</playerInfo>
+			</div>
+		</div>
+		
+		<div class="row">
+			&nbsp;
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-6">
+				<actions
+					kernel="vm">
+				</actions>
+			</div>
+		</div>
+		
+		<div class="row">
+			&nbsp;
+		</div>
+		
+		<div class="row ">
+			<div class="col-xs-8 text-center">
+				<strong>
+					{{ vm.player.isInsideDungeon ? 'Dungeon map' : 'World map' }}
+				</strong>
+				<div class="well">
+					<vis-network
+						ng-show="!vm.player.isInsideDungeon"
+						data="vm.worldmapdata"
+						options="vm.worldmapoptions"
+						events="vm.worldmapevents"
+						height="100%"></vis-network>
+					<vis-network
+						ng-show="vm.player.isInsideDungeon"
+						data="vm.dungeonmapdata"
+						options="vm.dungeonmapoptions"
+						events="vm.dungeonmapevents"
+						height="100%"></vis-network>
+				</div>
+			</div>
+			
+			<div class="col-xs-4 text-center">
+				<div
+					class="col-xs-6 myfade"
+					myfade="vm.player.isInsideDungeon"
+					afterhide="vm.clearCurrentDungeon()"
+					aftershow="vm.canClearDungeon = true; vm.fitDungeonNetwork();"
+					>
+					&nbsp;
+	
+					<dungeoninfo
+						obj="vm.dungeon">
+					</dungeoninfo>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			&nbsp;
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-6">
+				<combatlog
+					entries="vm.combatEntries">
+				</combatlog>
+			</div>
+			
+			<div class="col-xs-6">
+				<generallog
+					entries="vm.generalEntries">
+				</generallog>
+			</div>
+		</div>
+
+	</div>	
+</span>

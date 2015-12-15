@@ -1,0 +1,38 @@
+.turncounter-name {
+	background: seagreen;
+	color: yellow;
+	/*border: 1px solid black;*/
+}
+
+.turncounter-value {
+	background: seagreen;
+	color: yellow;
+	/*border: 1px solid black;*/
+}
+
+.genericlabel-name {
+	background: goldenrod;
+	/*border: 1px solid black;*/
+}
+
+.genericlabel-value {
+	background: orange;
+	/*border: 1px solid black;*/
+}
+
+.myfade.ng-hide-add {
+	display:block !important;
+	opacity: 1; 
+	transition: opacity 1s;
+}
+.myfade.ng-hide-add.ng-hide-add-active {
+	opacity: 0;
+}
+.myfade.ng-hide-remove {
+	display:block !important;
+	opacity: 0; 
+	transition: opacity 1s;
+}
+.myfade.ng-hide-remove.ng-hide-remove-active {
+	opacity: 1;
+}

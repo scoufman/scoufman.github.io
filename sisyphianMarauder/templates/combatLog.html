@@ -1,0 +1,19 @@
+<span>
+	<div class="row">
+		<div class="col-xs-12 text-center">
+			<strong>
+				Combat log
+			</strong>
+		</div>
+	</div>
+
+	<div class="row animation" ng-repeat="entry in combatlog.entries">
+		<div class="col-xs-2 text-right">
+			{{ entry.timestamp }} 
+		</div>
+
+		<div class="col-xs-10 text-left">
+			{{ entry.message }}
+		</div>
+	</div>	
+</span
