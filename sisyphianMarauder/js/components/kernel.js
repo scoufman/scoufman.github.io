@@ -12,9 +12,9 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 	var vm = this;
 	
 	vm.turnTime = 50;		// in ms	
-	vm.currentRoomId = 0;
+	vm.currentNodeId = 0;
 	vm.replaceColor = "#00CC00";
-	vm.targetRoomId = 0;
+	vm.targetNodeId = 0;
 	vm.autoExplore = false;
 	
 	vm.worldSeed = 16666;
@@ -29,6 +29,26 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		},
 		layout: {
 			// randomSeed: vm.worldSeed
+		},
+		physics: {
+			enabled: true,
+			maxVelocity: 25,
+			minVelocity: 0.4,
+			stabilization: {
+				enabled: true,
+				iterations: 180, // maximum number of iteration to stabilize
+				updateInterval: 10,
+				onlyDynamicEdges: false,
+				fit: true
+	        },
+			barnesHut: {
+				// gravitationalConstant: -5000,
+				// springConstant: 0.04,
+				//avoidOverlap: 0.05,
+				// centralGravity: 1.5,
+				//springLength: 95,
+				// damping: 0.09
+			}
 		}
 	};
 	
@@ -62,7 +82,7 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 			//  navigationButtons: true
 		},
 		layout: {
-			randomSeed: vm.dungeonSeed
+			randomSeed: vm.dungeonSeed,
 		},
 		physics: {
 			stabilization: {
@@ -92,6 +112,9 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 	vm.worldmapevents.onload = function(network) {
 		console.log('got map network obj');
 		vm.mapNetwork = network;
+		console.log('WOW2');
+		vm.worldmap.assignNetwork(network);
+		//vm.worldmap.networkObj = network;
 	}
 	// vm.worldmapevents.click = function(args) {
 	// 	console.log('click');
@@ -107,8 +130,8 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		for (var key in args.nodes) {
 			var item = vm.worldmap.nodes.get(args.nodes[key]);
 			console.log('user wants to move to node id ' + item.id);
-			if (item.id != vm.currentRoomId) {
-				vm.targetRoomId = item.id;
+			if (item.id != vm.currentNodeId) {
+				vm.targetNodeId = item.id;
 			}
 		}
 	}
@@ -219,7 +242,7 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 	vm.processTurn = function() {
 		vm.turnCount += 1;
 		
-		if (vm.targetRoomId > 0) {
+		if (vm.targetNodeId > 0) {
 			var dt = new Date();
 			
 			//console.log((dt - vm.lastMoveTimestamp) / 1000);
@@ -227,20 +250,20 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 				//console.log('move now');
 				//console.log('calculate next node');
 				var G = vm.makeTempGraph();
-				var t = jsnx.shortestPath(G, {source:vm.currentRoomId, target:vm.targetRoomId});
+				var t = jsnx.shortestPath(G, {source:vm.currentNodeId, target:vm.targetNodeId});
 				//console.log(t);
 				vm.lastMoveTimestamp = dt;
 				
-				vm.worldmap.nodes.update({id:vm.currentRoomId, color:vm.replaceColor});
+				vm.worldmap.nodes.update({id:vm.currentNodeId, color:vm.replaceColor});
 				
-				vm.currentRoomId = t[1];
+				vm.currentNodeId = t[1];
 				
-				vm.worldmap.nodes.update({id:vm.currentRoomId, color:"#FFFF00"});
+				vm.worldmap.nodes.update({id:vm.currentNodeId, color:"#FFFF00"});
 				
-				vm.worldmap.extendRoom(vm.currentRoomId);
+				vm.worldmap.extendNode(vm.currentNodeId);
 				
-				if (vm.currentRoomId == vm.targetRoomId)
-					vm.targetRoomId = 0;
+				if (vm.currentNodeId == vm.targetNodeId)
+					vm.targetNodeId = 0;
 			}
 		}
 		else {
@@ -251,7 +274,7 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 					}
 				});
 				//console.log(notExtendedNodes[0].id);
-				vm.targetRoomId = notExtendedNodes[0].id;
+				vm.targetNodeId = notExtendedNodes[0].id;
 			}
 		}
 		
@@ -298,19 +321,21 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 	 	vm.player = vm.mobsFact.createMob();
 		vm.player.name = "Hulk";
 	
-		vm.worldmap = mapFact.createMap("World", "Dank cave");
+		vm.worldmap = mapFact.createMap("World", "Home sweet home");
 		
 		vm.worldmapdata = {
 			"nodes": vm.worldmap.nodes,
 			"edges": vm.worldmap.edges			
 		};
 		
+		console.log('WOW1');
+		
 		vm.dungeon = null;
 		
 		// TODO fix initial positioning
-		vm.currentRoomId = vm.worldmap.nodes.get(2).id;
+		vm.currentNodeId = vm.worldmap.nodes.get(2).id;
 		console.log(JSON.stringify(vm.worldmap.nodes.get(2)));
-		console.log(vm.currentRoomId);
+		console.log(vm.currentNodeId);
 		vm.turnTimer = $interval(function() { vm.processTurn();  }, vm.turnTime);
 
 		toasty.success('woop woop');
