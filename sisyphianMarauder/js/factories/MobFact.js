@@ -8,6 +8,11 @@ app.factory('MobFact', ['$rootScope', 'StatsFact', function($rootScope, StatsFac
 	factory.createMob = function() {
 		var mob = {};
 		
+		mob.x = 0;
+		mob.y = 0;
+		mob.moving = false;
+		mob.reachedNode = true;
+		
 		mob.lastActionTurn = 0;
 		
 		mob.canAttack = function() {

@@ -11,7 +11,7 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 	
 	var vm = this;
 	
-	vm.turnTime = 50;		// in ms	
+	vm.turnTime = 25;		// in ms	
 	vm.currentNodeId = 0;
 	vm.replaceColor = "#00CC00";
 	vm.targetNodeId = 0;
@@ -29,10 +29,11 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		},
 		layout: {
 			// randomSeed: vm.worldSeed
+			//hierarchical: true
 		},
 		physics: {
 			enabled: true,
-			maxVelocity: 25,
+			maxVelocity: 35,
 			minVelocity: 0.4,
 			stabilization: {
 				enabled: true,
@@ -129,11 +130,53 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		console.log('double click');
 		for (var key in args.nodes) {
 			var item = vm.worldmap.nodes.get(args.nodes[key]);
-			console.log('user wants to move to node id ' + item.id);
+			
 			if (item.id != vm.currentNodeId) {
+				console.log('user wants to move to node id ' + item.id);
 				vm.targetNodeId = item.id;
 			}
 		}
+	}
+		
+	vm.img = new Image;
+	vm.img.onload = function(){
+		//ctx.drawImage(img,0,0); // Or at whatever offset you like
+	};
+	vm.img.src = "img/player.png";
+	
+	vm.worldmapevents.afterDrawing = function(canvas) {
+
+		if (vm.player.moving == false) {
+			console.log('stabilizing on nodeId:' + vm.currentNodeId);			
+			var node = vm.mapNetwork.getPositions(vm.currentNodeId)[vm.currentNodeId];
+			vm.player.x = node.x;
+			vm.player.y = node.y;
+		}
+		else {
+			if ((vm.currentNodeId <= 0 || vm.nextNodeId <= 0) || vm.player.reachedNode == true)
+				return;
+			// 	
+			var res = vm.mapNetwork.getPositions([vm.currentNodeId, vm.nextNodeId]);
+			var from = { x: res[vm.currentNodeId].x, y: res[vm.currentNodeId].y };
+			var to = { x: res[vm.nextNodeId].x, y: res[vm.nextNodeId].y };
+			var dist = Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2));
+			var dirx = (to.x - from.x) / dist;
+			var diry = (to.y - from.y) / dist;
+			
+			vm.player.x += dirx * (dist / 25);
+			vm.player.y += diry * (dist / 25);
+
+			if(Math.sqrt(Math.pow(vm.player.x - from.x, 2) + Math.pow(vm.player.y - from.y, 2)) >= dist) {
+				vm.player.moving = false;
+				vm.player.reachedNode = true;
+				console.log('reached point');
+			}
+		}
+		canvas.drawImage(vm.img, vm.player.x, vm.player.y, 72, 52);
+	}
+	vm.worldmapevents.oncontext = function(args) {
+		console.log('right click');
+		args.event.preventDefault();
 	}
 	// vm.worldmapevents.selectNode = function (args) {
     //      console.warn('Event "selectNode" triggered - ' + JSON.stringify(args));
@@ -237,33 +280,40 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		}
 	}
 	
-	vm.lastMoveTimestamp = new Date();
+	vm.nextNodeId = 0;
+	vm.nextPath = null;
+	vm.getNextNodes = function() {
+		var G = vm.makeTempGraph();
+		vm.nextPath = jsnx.shortestPath(G, {source:vm.currentNodeId, target:vm.targetNodeId});
+		
+		return vm.nextPath;
+	}
 	
 	vm.processTurn = function() {
 		vm.turnCount += 1;
 		
 		if (vm.targetNodeId > 0) {
-			var dt = new Date();
+		
+			if (vm.nextNodeId == 0) {
+				vm.nextNodeId = vm.getNextNodes()[1];
+				console.log('Moving to nodeId:' + vm.nextNodeId + ' from nodeId:' + vm.currentNodeId);
+				vm.player.moving = true;
+				vm.player.reachedNode = false;
+			}
+
+			vm.worldmap.nodes.update({id:vm.currentNodeId, color:"#FFFF00"});
 			
-			//console.log((dt - vm.lastMoveTimestamp) / 1000);
-			if ((dt - vm.lastMoveTimestamp) / 1000 > 0.5) {
-				//console.log('move now');
-				//console.log('calculate next node');
-				var G = vm.makeTempGraph();
-				var t = jsnx.shortestPath(G, {source:vm.currentNodeId, target:vm.targetNodeId});
-				//console.log(t);
-				vm.lastMoveTimestamp = dt;
+			if (vm.player.reachedNode) {
 				
-				vm.worldmap.nodes.update({id:vm.currentNodeId, color:vm.replaceColor});
-				
-				vm.currentNodeId = t[1];
-				
-				vm.worldmap.nodes.update({id:vm.currentNodeId, color:"#FFFF00"});
+				vm.currentNodeId = vm.nextNodeId;
 				
 				vm.worldmap.extendNode(vm.currentNodeId);
 				
-				if (vm.currentNodeId == vm.targetNodeId)
+				if (vm.currentNodeId == vm.targetNodeId) {
 					vm.targetNodeId = 0;
+					vm.player.moving = false;
+				}
+				vm.nextNodeId = 0;
 			}
 		}
 		else {
@@ -273,14 +323,9 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 						return (item.extended == false);
 					}
 				});
-				//console.log(notExtendedNodes[0].id);
 				vm.targetNodeId = notExtendedNodes[0].id;
+				vm.nextNodeId = 0;
 			}
-		}
-		
-		if (vm.turnCount % 1200 == 0) {
-			if (vm.turnCount - vm.player.lastActionTurn >= 40)
-				vm.addGeneralEntry("You whisper: Maybe I should search around a bit.");
 		}
 		
 		vm.processCombat();

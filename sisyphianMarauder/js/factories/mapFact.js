@@ -74,6 +74,12 @@ app.factory('mapFact', ['$rootScope', 'NameFact', 'VisDataSet', function($rootSc
 		return val;
 	}
 	
+	factory.createEmptyNode = function() {
+		var node = {};
+		
+		return node;
+	}
+	
 	factory.createNode = function(name, subtype, size, color) {
 		var node = {};
 		
@@ -85,6 +91,7 @@ app.factory('mapFact', ['$rootScope', 'NameFact', 'VisDataSet', function($rootSc
 		node.color = color;
 		node.shadow = true;
 		node.extended = false;
+		node.level = 1;
 		
 		return node;
 	}
@@ -165,6 +172,7 @@ app.factory('mapFact', ['$rootScope', 'NameFact', 'VisDataSet', function($rootSc
 		node.color = "#FF0000";		
 		node.shape = "circularImage";
 		node.image = factory.getGraphicForNodeSubType(subtype);
+		node.level = 1;
 			
 		if (type == factory.NODE_TYPE_DUNGEON) {
 			node.size = 50;
@@ -182,8 +190,7 @@ app.factory('mapFact', ['$rootScope', 'NameFact', 'VisDataSet', function($rootSc
 		map.assignNetwork = function(networkObj) {
 			console.log('Assigning network to map');
 			map.mapNetwork = networkObj;	
-		}
-		
+		}		
 		
 		map.addEdge = function(sourceNodeId, destNodeId) {
 			// TODO: add checks if already existing			
@@ -237,7 +244,7 @@ app.factory('mapFact', ['$rootScope', 'NameFact', 'VisDataSet', function($rootSc
 		var node = factory.createNode(firstNodeName, factory.NODE_SUBTYPE_HOUSE, 40, "#FFFF00")
 		map.nodes.add(node);
 		map.extendNode(node.id);
-		//console.log('yyy:' + JSON.stringify(map.nodes));
+				
 		return map;
 	}
 
