@@ -118,12 +118,12 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		//vm.worldmap.networkObj = network;
 	}
 	vm.worldmapevents.stabilized = function(args) {
-		var iterations = args.iterations;
-		
-		if (iterations > 1) {
-			vm.worldmap.nodes.forEach(function(item) { vm.worldmap.nodes.update({id: item.id, physics:false }); });	
-			vm.worldmap.edges.forEach(function(item) { vm.worldmap.edges.update({id: item.id, physics:false }); });
-		}
+		// var iterations = args.iterations;
+		// 
+		// if (iterations > 1) {
+		// 	vm.worldmap.nodes.forEach(function(item) { vm.worldmap.nodes.update({id: item.id, physics:false }); });	
+		// 	vm.worldmap.edges.forEach(function(item) { vm.worldmap.edges.update({id: item.id, physics:false }); });
+		// }
 		//console.log('stabilized after:' + JSON.stringify(args));
 	}
 	// vm.worldmapevents.click = function(args) {
