@@ -45,7 +45,7 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 			barnesHut: {
 				// gravitationalConstant: -5000,
 				// springConstant: 0.04,
-				//avoidOverlap: 0.05,
+				//avoidOverlap: 1,
 				// centralGravity: 1.5,
 				//springLength: 95,
 				// damping: 0.09
@@ -117,6 +117,15 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 		vm.worldmap.assignNetwork(network);
 		//vm.worldmap.networkObj = network;
 	}
+	vm.worldmapevents.stabilized = function(args) {
+		var iterations = args.iterations;
+		
+		if (iterations > 1) {
+			vm.worldmap.nodes.forEach(function(item) { vm.worldmap.nodes.update({id: item.id, physics:false }); });	
+			vm.worldmap.edges.forEach(function(item) { vm.worldmap.edges.update({id: item.id, physics:false }); });
+		}
+		//console.log('stabilized after:' + JSON.stringify(args));
+	}
 	// vm.worldmapevents.click = function(args) {
 	// 	console.log('click');
 	// 	for (var key in args.nodes) {
@@ -145,33 +154,34 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 	vm.img.src = "img/player.png";
 	
 	vm.worldmapevents.afterDrawing = function(canvas) {
-
+		var from = null;
+		var to = null;
+		
+		var res = vm.mapNetwork.getPositions([vm.currentNodeId, vm.nextNodeId]);
+		
 		if (vm.player.moving == false) {
-			console.log('stabilizing on nodeId:' + vm.currentNodeId);			
-			var node = vm.mapNetwork.getPositions(vm.currentNodeId)[vm.currentNodeId];
-			vm.player.x = node.x;
-			vm.player.y = node.y;
+			from = { x: vm.player.x, y: vm.player.y };
+			to = { x: res[vm.currentNodeId].x, y: res[vm.currentNodeId].y };
 		}
 		else {
-			if ((vm.currentNodeId <= 0 || vm.nextNodeId <= 0) || vm.player.reachedNode == true)
-				return;
-			// 	
-			var res = vm.mapNetwork.getPositions([vm.currentNodeId, vm.nextNodeId]);
-			var from = { x: res[vm.currentNodeId].x, y: res[vm.currentNodeId].y };
-			var to = { x: res[vm.nextNodeId].x, y: res[vm.nextNodeId].y };
-			var dist = Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2));
-			var dirx = (to.x - from.x) / dist;
-			var diry = (to.y - from.y) / dist;
+			from = { x: res[vm.currentNodeId].x, y: res[vm.currentNodeId].y };
+			to = { x: res[vm.nextNodeId].x, y: res[vm.nextNodeId].y };
 			
-			vm.player.x += dirx * (dist / 25);
-			vm.player.y += diry * (dist / 25);
-
-			if(Math.sqrt(Math.pow(vm.player.x - from.x, 2) + Math.pow(vm.player.y - from.y, 2)) >= dist) {
-				vm.player.moving = false;
-				vm.player.reachedNode = true;
-				console.log('reached point');
-			}
 		}
+	
+		var dist = Math.sqrt(Math.pow(to.x - from.x, 2) + Math.pow(to.y - from.y, 2));
+		var dirx = (to.x - from.x) / dist;
+		var diry = (to.y - from.y) / dist;
+		
+		vm.player.x += dirx * (dist / 15);
+		vm.player.y += diry * (dist / 15);
+
+		if(Math.sqrt(Math.pow(vm.player.x - from.x, 2) + Math.pow(vm.player.y - from.y, 2)) >= dist) {
+			vm.player.moving = false;
+			vm.player.reachedNode = true;
+			console.log('reached point');
+		}
+
 		canvas.drawImage(vm.img, vm.player.x, vm.player.y, 72, 52);
 	}
 	vm.worldmapevents.oncontext = function(args) {
@@ -301,6 +311,7 @@ function($scope, $interval, toasty, MobFact, DungeonFact, StatsFact, VisDataSet,
 				vm.player.reachedNode = false;
 			}
 
+			// force graph to be re-drawn
 			vm.worldmap.nodes.update({id:vm.currentNodeId, color:"#FFFF00"});
 			
 			if (vm.player.reachedNode) {
